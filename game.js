@@ -39,25 +39,28 @@ class Game {
   }
 
   #createUnits() {
+    const maxWidth = this.#settings.gridSize.width;
+    const maxHeight = this.#settings.gridSize.height;
+
     const player1Position = new Position(
       Position.getNotCrossedPosition(
         [],
-        this.#settings.gridSize.width,
-        this.#settings.gridSize.height ));
+        maxWidth,
+        maxHeight ));
     this.#player1 = new Player(player1Position, 1);
 
     const player2Position = new Position(
       Position.getNotCrossedPosition(
         [player1Position],
-        this.#settings.gridSize.width,
-        this.#settings.gridSize.height ));
+        maxWidth,
+        maxHeight ));
     this.#player2 = new Player(player2Position, 2);
 
     const googlePosition = new Position(
       Position.getNotCrossedPosition(
         [player1Position, player2Position],
-        this.#settings.gridSize.width,
-        this.#settings.gridSize.height ));
+        maxWidth,
+        maxHeight ));
     this.#google = new Google(googlePosition)
 
   }
