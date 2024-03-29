@@ -42,6 +42,10 @@ describe("game test", () => {
 
     game.start();
 
+    console.log(game.player1);
+    console.log(game.player2);
+    console.log(game.google);
+
     expect([1]).toContain(game.player1.position.x)
     expect([1, 2, 3]).toContain(game.player1.position.y)
 

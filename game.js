@@ -10,21 +10,6 @@ class Game {
   #player2;
   #google;
 
-  #getRandomPosition(coordinates) {
-    let x, y;
-
-    do {
-      x = NumberUtil.getRandomNumber(this.#settings.gridSize.width);
-      y = NumberUtil.getRandomNumber(this.#settings.gridSize.height);
-    } while (
-      coordinates.some(
-        coord => coord.x === x && coord.y === y
-      )
-      );
-
-    return { x, y };
-  }
-
   constructor() {
 
   }
@@ -54,17 +39,25 @@ class Game {
   }
 
   #createUnits() {
-    const player1Position = new Position({
-        x: NumberUtil.getRandomNumber(this.#settings.gridSize.width),
-        y: NumberUtil.getRandomNumber(this.#settings.gridSize.height)
-      }
-    );
+    const player1Position = new Position(
+      Position.getNotCrossedPosition(
+        [],
+        this.#settings.gridSize.width,
+        this.#settings.gridSize.height ));
     this.#player1 = new Player(player1Position, 1);
 
-    const player2Position = new Position(this.#getRandomPosition([player1Position]));
+    const player2Position = new Position(
+      Position.getNotCrossedPosition(
+        [player1Position],
+        this.#settings.gridSize.width,
+        this.#settings.gridSize.height ));
     this.#player2 = new Player(player2Position, 2);
 
-    const googlePosition = new Position(this.#getRandomPosition([player1Position, player2Position]));
+    const googlePosition = new Position(
+      Position.getNotCrossedPosition(
+        [player1Position, player2Position],
+        this.#settings.gridSize.width,
+        this.#settings.gridSize.height ));
     this.#google = new Google(googlePosition)
 
   }
@@ -120,7 +113,20 @@ class Position {
     this.y = obj.y;
   }
 
-  static check;
+  static getNotCrossedPosition(coordinates, maxX, maxY) {
+    let x, y;
+
+    do {
+      x = NumberUtil.getRandomNumber(maxX);
+      y = NumberUtil.getRandomNumber(maxY);
+    } while (
+      coordinates.some(
+        coord => coord.x === x && coord.y === y
+      )
+      );
+
+    return { x, y };
+  }
 }
 
 module.exports = {
