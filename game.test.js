@@ -81,6 +81,48 @@ describe("game test", () => {
         await delay(150);
         expect(game.google.position.equal(prevPosition)).toBe(false)
     })
+
+    it("catch google by player1 ot player2 for one row", async () => {
+        for (let i = 0; i < 10; i++) {
+            const game = new Game();
+
+            game.settings = {
+                gridSize: {
+                    width: 3,
+                    height: 1
+                },
+            };
+
+            await game.start();
+
+            const deltaForPlayer1 = game.google.position.x - game.player1.position.x;
+
+            const prevGooglePosition = game.google.position.clone();
+
+            if (Math.abs(deltaForPlayer1) === 2) {
+                const deltaForPlayer2 = game.google.position.x - game.player2.position.x;
+                if (deltaForPlayer2 > 0) {
+                    game.movePlayer2Right();
+                } else {
+                    game.movePlayer2Left();
+                }
+
+                expect(game.score[1].points).toBe(0);
+                expect(game.score[2].points).toBe(1);
+            } else {
+                if (deltaForPlayer1 > 0) {
+                    game.movePlayer1Right();
+                } else {
+                    game.movePlayer1Left();
+                }
+
+                expect(game.score[1].points).toBe(1);
+                expect(game.score[2].points).toBe(0);
+            }
+
+            expect(game.google.position.equel(prevGooglePosition)).toBe(false);
+        }
+    })
 });
 
 const delay = (ms) => new Promise((res) => {

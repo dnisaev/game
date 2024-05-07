@@ -10,6 +10,10 @@ class Game {
     #player1;
     #player2;
     #google;
+    #score = {
+        1: {points: 0},
+        2: {points: 0},
+    }
 
     constructor() {
 
@@ -22,16 +26,22 @@ class Game {
         this.#createUnits()
 
         setInterval(() => {
-            const googlePosition = new Position(
-                Position.getNotCrossedPosition([
-                        this.#player1.position,
-                        this.#player2.position,
-                        this.#google.position],
-                    this.#settings.gridSize.width,
-                    this.#settings.gridSize.height)
-            );
-            this.#google = new Google(googlePosition)
+            this.#moveGoogle()
         }, this.#settings.googleJumpInterval)
+    }
+
+    #moveGoogle() {
+        const googlePosition = new Position(
+            Position.getNotCrossedPosition(
+                [
+                    this.#player1.position,
+                    this.#player2.position,
+                    this.#google.position
+                ],
+                this.#settings.gridSize.width,
+                this.#settings.gridSize.height)
+        );
+        this.#google = new Google(googlePosition)
     }
 
     pause() {
@@ -73,6 +83,91 @@ class Game {
 
     }
 
+    #checkBorders(player, delta){
+        const newPosition = player.position.clone()
+        if (delta.x) newPosition.x += delta.x
+        if (delta.y) newPosition.y += delta.y
+
+        if (newPosition.x > this.#settings.gridSize.width || newPosition.x < 1) return false;
+        if (newPosition.y > this.#settings.gridSize.height || newPosition.y < 1) return false;
+
+        return true;
+    }
+
+    #checkOtherPlayer(movingPlayer, otherPlayer, delta) {
+        // const newPosition = movingPlayer.position.clone()
+        // if (delta.x) newPosition.x += delta.x
+        if (delta.y) newPosition.y += delta.y
+
+        return otherPlayer.position.equal(newPosition)
+    }
+
+    #checkGoogleCatching(player, delta) {
+        const newPosition = player.position.clone()
+        if (delta.x) newPosition.x += delta.x
+        if (delta.y) newPosition.y += delta.y
+
+        if(this.#google.position.equal(newPosition)) {
+            this.#score[player.playerNumber].points += 1;
+            this.#moveGoogle();
+        }
+    }
+
+    #movePlayer(player, otherPlayer, delta) {
+        const isBorder = this.#checkBorders(player, delta)
+        if (isBorder) return
+
+        const isOtherPlayer = this.#checkOtherPlayer(player, otherPlayer, delta)
+        if (isOtherPlayer) return
+
+        this.#checkGoogleCatching(player, delta)
+
+        if (delta.x) player.position.x += delta.x
+        if (delta.y) player.position.y += delta.y
+
+        player.position.x += delta.x
+    }
+
+    movePlayer1Right(){
+        const delta = {x: 1}
+        this.#movePlayer(this.#player1, this.#player2, delta)
+    }
+
+    movePlayer1Left(){
+        const delta = {x: -1}
+        this.#movePlayer(this.#player1, this.#player2, delta)
+    }
+
+    movePlayer1Up() {
+        const delta = {y: -1}
+        this.#movePlayer(this.#player1, this.#player2, delta)
+    }
+
+    movePlayer1Down() {
+        const delta = {y: 1}
+        this.#movePlayer(this.#player1, this.#player2, delta)
+    }
+
+    movePlayer2Right() {
+        const delta = {x: 1}
+        this.#movePlayer(this.#player2, this.#player1, delta)
+    }
+
+    movePlayer2Left() {
+        const delta = {x: -1}
+        this.#movePlayer(this.#player2, this.#player1, delta)
+    }
+
+    movePlayer2Up() {
+        const delta = {y: -1}
+        this.#movePlayer(this.#player2, this.#player1, delta)
+    }
+
+    movePlayer2Down() {
+        const delta = {y: 1}
+        this.#movePlayer(this.#player2, this.#player1, delta)
+    }
+
     set settings(newSetting) {
         this.#settings = newSetting;
     }
@@ -95,6 +190,10 @@ class Game {
 
     get google() {
         return this.#google
+    }
+
+    get score() {
+        return this.#score
     }
 }
 
