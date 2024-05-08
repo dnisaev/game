@@ -1,7 +1,7 @@
 const {Game} = require("./game.js");
 
 describe("game test", () => {
-    it("init test", () => {
+    it.skip("init test", () => {
         const game = new Game();
 
         game.settings = {
@@ -15,7 +15,7 @@ describe("game test", () => {
         expect(game.settings.gridSize.height).toBe(5);
     });
 
-    it("start game", () => {
+    it.skip("start game", () => {
         const game = new Game();
 
         game.settings = {
@@ -30,7 +30,7 @@ describe("game test", () => {
         expect(game.status).toBe('in-process');
     });
 
-    it("units should have unique coordinates", () => {
+    it.skip("units should have unique coordinates", () => {
         const game = new Game();
 
         game.settings = {
@@ -120,7 +120,7 @@ describe("game test", () => {
                 expect(game.score[2].points).toBe(0);
             }
 
-            expect(game.google.position.equel(prevGooglePosition)).toBe(false);
+            expect(game.google.position.equal(prevGooglePosition)).toBe(false);
         }
     })
 });

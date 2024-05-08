@@ -14,6 +14,7 @@ class Game {
         1: {points: 0},
         2: {points: 0},
     }
+    #googleMovingIntervalId
 
     constructor() {
 
@@ -25,7 +26,16 @@ class Game {
         }
         this.#createUnits()
 
-        setInterval(() => {
+        this.#runMovingGoogleInterval()
+    }
+
+    async stop() {
+        clearInterval(this.#googleMovingIntervalId);
+        this.#status = "stopped";
+    }
+
+    #runMovingGoogleInterval() {
+        this.#googleMovingIntervalId = setInterval(() => {
             this.#moveGoogle()
         }, this.#settings.googleJumpInterval)
     }
@@ -41,6 +51,7 @@ class Game {
                 this.#settings.gridSize.width,
                 this.#settings.gridSize.height)
         );
+        clearInterval(this.#googleMovingIntervalId)
         this.#google = new Google(googlePosition)
     }
 
@@ -88,15 +99,15 @@ class Game {
         if (delta.x) newPosition.x += delta.x
         if (delta.y) newPosition.y += delta.y
 
-        if (newPosition.x > this.#settings.gridSize.width || newPosition.x < 1) return false;
-        if (newPosition.y > this.#settings.gridSize.height || newPosition.y < 1) return false;
+        if (newPosition.x > this.#settings.gridSize.width || newPosition.x < 1) return true;
+        if (newPosition.y > this.#settings.gridSize.height || newPosition.y < 1) return true;
 
-        return true;
+        return false;
     }
 
     #checkOtherPlayer(movingPlayer, otherPlayer, delta) {
-        // const newPosition = movingPlayer.position.clone()
-        // if (delta.x) newPosition.x += delta.x
+        const newPosition = movingPlayer.position.clone()
+        if (delta.x) newPosition.x += delta.x
         if (delta.y) newPosition.y += delta.y
 
         return otherPlayer.position.equal(newPosition)
@@ -104,12 +115,12 @@ class Game {
 
     #checkGoogleCatching(player, delta) {
         const newPosition = player.position.clone()
-        if (delta.x) newPosition.x += delta.x
-        if (delta.y) newPosition.y += delta.y
 
         if(this.#google.position.equal(newPosition)) {
+            clearInterval(this.#googleMovingIntervalId);
             this.#score[player.playerNumber].points += 1;
             this.#moveGoogle();
+            this.#runMovingGoogleInterval();
         }
     }
 
@@ -120,10 +131,10 @@ class Game {
         const isOtherPlayer = this.#checkOtherPlayer(player, otherPlayer, delta)
         if (isOtherPlayer) return
 
-        this.#checkGoogleCatching(player, delta)
-
         if (delta.x) player.position.x += delta.x
         if (delta.y) player.position.y += delta.y
+
+        this.#checkGoogleCatching(player, delta)
 
         player.position.x += delta.x
     }
