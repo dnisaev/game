@@ -1,9 +1,14 @@
 const {Game} = require("./game.js");
 
 describe("game test", () => {
-    it.skip("init test", () => {
-        const game = new Game();
-
+    let game
+    beforeEach(()=>{
+        game = new Game();
+    });
+    afterEach(async () => {
+        await game.stop();
+    })
+    it("init test", async () => {
         game.settings = {
             gridSize: {
                 width: 4,
@@ -14,10 +19,7 @@ describe("game test", () => {
         expect(game.settings.gridSize.width).toBe(4);
         expect(game.settings.gridSize.height).toBe(5);
     });
-
-    it.skip("start game", () => {
-        const game = new Game();
-
+    it("start game", async () => {
         game.settings = {
             gridSize: {
                 width: 4,
@@ -26,13 +28,10 @@ describe("game test", () => {
         };
 
         expect(game.status).toBe('pending');
-        game.start();
+        await game.start();
         expect(game.status).toBe('in-process');
     });
-
-    it.skip("units should have unique coordinates", () => {
-        const game = new Game();
-
+    it("units should have unique coordinates", async () => {
         game.settings = {
             gridSize: {
                 width: 1,
@@ -40,11 +39,7 @@ describe("game test", () => {
             }
         };
 
-        game.start();
-
-        console.log(game.player1);
-        console.log(game.player2);
-        console.log(game.google);
+        await game.start();
 
         expect([1]).toContain(game.player1.position.x)
         expect([1, 2, 3]).toContain(game.player1.position.y)
@@ -62,11 +57,7 @@ describe("game test", () => {
                 game.google.position.x !== game.player2.position.x)
         )
     });
-
     it("check google position after jump", async () => {
-
-        const game = new Game();
-
         game.settings = {
             gridSize: {
                 width: 1,
@@ -81,11 +72,9 @@ describe("game test", () => {
         await delay(150);
         expect(game.google.position.equal(prevPosition)).toBe(false)
     })
-
     it("catch google by player1 ot player2 for one row", async () => {
         for (let i = 0; i < 10; i++) {
             const game = new Game();
-
             game.settings = {
                 gridSize: {
                     width: 3,
@@ -119,7 +108,6 @@ describe("game test", () => {
                 expect(game.score[1].points).toBe(1);
                 expect(game.score[2].points).toBe(0);
             }
-
             expect(game.google.position.equal(prevGooglePosition)).toBe(false);
         }
     })
