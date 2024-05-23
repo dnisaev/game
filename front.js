@@ -1,17 +1,24 @@
 import {Game} from "./game.js";
-
-const game = new Game()
+import {EventEmitter} from "./utils/observer.js";
 
 const start = async () => {
-    await game.start();
+    const eventEmitter = new EventEmitter();
+    const game = new Game(eventEmitter);
+
+    const table = document.createElement('table');
+    const result = document.querySelector("#result");
+
+    document.body.append(table);
 
     const render = () => {
-        const table = document.createElement('table')
-        document.body.append(table)
+        table.innerHTML = '';
+        result.innerHTML = '';
 
-        for(let y = 1; y <= game.settings.gridSize.height; y++) {
+        result.append(`Коржик: ${game.score[1].points} — Карамелька: ${game.score[2].points}`);
+
+        for (let y = 1; y <= game.settings.gridSize.height; y++) {
             const tr = document.createElement('tr')
-            for(let x = 1; x <= game.settings.gridSize.width; x++) {
+            for (let x = 1; x <= game.settings.gridSize.width; x++) {
                 const td = document.createElement('td')
 
                 if (game.player1.position.x === x && game.player1.position.y === y) {
@@ -41,12 +48,51 @@ const start = async () => {
             }
             table.append(tr)
         }
-    }
-    render()
+    };
+
+    game.eventEmitter.addEventListener('update', () => render())
+
+    await game.start();
+
+    window.addEventListener('keydown', (event)=>{
+        switch (event.code) {
+            case 'ArrowUp': {
+                game.movePlayer1Up();
+                break;
+            }
+            case 'ArrowDown': {
+                game.movePlayer1Down();
+                break;
+            }
+            case 'ArrowLeft': {
+                game.movePlayer1Left();
+                break;
+            }
+            case 'ArrowRight': {
+                game.movePlayer1Right();
+                break;
+            }
+            case 'KeyW': {
+                game.movePlayer2Up();
+                break;
+            }
+            case 'KeyS': {
+                game.movePlayer2Down();
+                break;
+            }
+            case 'KeyA': {
+                game.movePlayer2Left();
+                break;
+            }
+            case 'KeyD': {
+                game.movePlayer2Right();
+                break;
+            }
+        }
+    })
+    console.log(game)
 }
 
 await start()
-
-console.log(game)
 
 

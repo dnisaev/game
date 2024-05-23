@@ -1,5 +1,5 @@
-class Observable {
-    #subscribers
+export class EventEmitter {
+    #subscribers= {};
     addEventListener(eventName, subscriber) {
         if(!this.#subscribers[eventName]) {
             this.#subscribers[eventName] = [];
@@ -7,7 +7,7 @@ class Observable {
         this.#subscribers[eventName].push(subscriber)
     }
     emit(eventName, data = null){
-        this.#subscribers[eventName].forEach(subscriber => subscriber(data))
+        this.#subscribers[eventName]?.forEach(subscriber => subscriber(data))
     }
     removeEventListener(eventName, subscriber){
         this.#subscribers[eventName] = this.#subscribers[eventName]?.filter(sub => sub !== subscriber)
