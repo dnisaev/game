@@ -1,7 +1,8 @@
-class Game {
+export class Game {
     #settings = {
+        pointsToWin: 10,
         gridSize: {
-            width: 4,
+            width: 5,
             height: 5
         },
         googleJumpInterval: 2000,
@@ -34,6 +35,11 @@ class Game {
         this.#status = "stopped";
     }
 
+    async #finishGame() {
+        clearInterval(this.#googleMovingIntervalId);
+        this.#status = "finished";
+    }
+
     #runMovingGoogleInterval() {
         this.#googleMovingIntervalId = setInterval(() => {
             this.#moveGoogle()
@@ -41,6 +47,10 @@ class Game {
     }
 
     #moveGoogle() {
+        if (this.#status === 'finished') {
+            this.#google = new Google(new Position({x: 0, y: 0}))
+            return
+        }
         const googlePosition = new Position(
             Position.getNotCrossedPosition(
                 [
@@ -51,7 +61,7 @@ class Game {
                 this.#settings.gridSize.width,
                 this.#settings.gridSize.height)
         );
-        clearInterval(this.#googleMovingIntervalId)
+        // clearInterval(this.#googleMovingIntervalId)
         this.#google = new Google(googlePosition)
     }
 
@@ -60,10 +70,6 @@ class Game {
     }
 
     resume() {
-
-    }
-
-    finished() {
 
     }
 
@@ -94,7 +100,7 @@ class Game {
 
     }
 
-    #checkBorders(player, delta){
+    #checkBorders(player, delta) {
         const newPosition = player.position.clone()
         if (delta.x) newPosition.x += delta.x
         if (delta.y) newPosition.y += delta.y
@@ -116,10 +122,13 @@ class Game {
     #checkGoogleCatching(player, delta) {
         const newPosition = player.position.clone()
 
-        if(this.#google.position.equal(newPosition)) {
+        if (this.#google.position.equal(newPosition)) {
             clearInterval(this.#googleMovingIntervalId);
             this.#score[player.playerNumber].points += 1;
             this.#moveGoogle();
+            if (this.#score[player.playerNumber].points === this.#settings.pointsToWin) {
+                this.#finishGame();
+            }
             this.#runMovingGoogleInterval();
         }
     }
@@ -139,12 +148,12 @@ class Game {
         player.position.x += delta.x
     }
 
-    movePlayer1Right(){
+    movePlayer1Right() {
         const delta = {x: 1}
         this.#movePlayer(this.#player1, this.#player2, delta)
     }
 
-    movePlayer1Left(){
+    movePlayer1Left() {
         const delta = {x: -1}
         this.#movePlayer(this.#player1, this.#player2, delta)
     }
@@ -263,6 +272,7 @@ class Position {
     }
 }
 
-module.exports = {
-    Game
-};
+// Export for game.test.js
+// module.exports = {
+//     Game
+// };
