@@ -57,35 +57,35 @@ const start = async () => {
     window.addEventListener('keydown', (event)=>{
         switch (event.code) {
             case 'ArrowUp': {
-                game.movePlayer1Up();
-                break;
-            }
-            case 'ArrowDown': {
-                game.movePlayer1Down();
-                break;
-            }
-            case 'ArrowLeft': {
-                game.movePlayer1Left();
-                break;
-            }
-            case 'ArrowRight': {
-                game.movePlayer1Right();
-                break;
-            }
-            case 'KeyW': {
                 game.movePlayer2Up();
                 break;
             }
-            case 'KeyS': {
+            case 'ArrowDown': {
                 game.movePlayer2Down();
                 break;
             }
-            case 'KeyA': {
+            case 'ArrowLeft': {
                 game.movePlayer2Left();
                 break;
             }
-            case 'KeyD': {
+            case 'ArrowRight': {
                 game.movePlayer2Right();
+                break;
+            }
+            case 'KeyW': {
+                game.movePlayer1Up();
+                break;
+            }
+            case 'KeyS': {
+                game.movePlayer1Down();
+                break;
+            }
+            case 'KeyA': {
+                game.movePlayer1Left();
+                break;
+            }
+            case 'KeyD': {
+                game.movePlayer1Right();
                 break;
             }
         }

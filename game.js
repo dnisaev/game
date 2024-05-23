@@ -1,9 +1,9 @@
 export class Game {
     #settings = {
-        pointsToWin: 10,
+        pointsToWin: 15,
         gridSize: {
-            width: 5,
-            height: 5
+            width: 6,
+            height: 6
         },
         googleJumpInterval: 2000,
     };
@@ -125,7 +125,7 @@ export class Game {
             clearInterval(this.#googleMovingIntervalId);
             this.#score[player.playerNumber].points += 1;
             this.#moveGoogle();
-            if (this.#score[player.playerNumber].points === this.#settings.pointsToWin - 1) {
+            if (this.#score[player.playerNumber].points === this.#settings.pointsToWin) {
                 this.#finishGame();
             }
             this.#runMovingGoogleInterval();
