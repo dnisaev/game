@@ -1,11 +1,11 @@
 export class Game {
     #settings = {
-        pointsToWin: 15,
+        pointsToWin: 10,
         gridSize: {
-            width: 6,
-            height: 6
+            width: 5,
+            height: 5
         },
-        googleJumpInterval: 2000,
+        googleJumpInterval: 8000,
     };
     #status = "pending";
     #player1;
